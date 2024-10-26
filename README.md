@@ -4,11 +4,11 @@
 
 ## Prerequisites
 
-- `libcurl` should installed on your system. It is required for making HTTP requests.
-  - **Windows**: You can download the precompiled binaries from the [cURL website](https://curl.se/windows/). Either add it to your `PATH` environment variable or use `-L` flag.
+- `libcurl` should be installed on your system. It is used for making HTTP requests.
+  - **Windows**: You can download the precompiled binaries from the [cURL website](https://curl.se/windows/). Either add it to your `PATH` environment variable or use the `-L` flag.
   - **Linux**: You can install `libcurl` using your package manager. 
 
-- `ACCESS_TOKEN` environment variable should be set to your access token which you can get from [vk dev website](https://dev.vk.com/).
+- `ACCESS_TOKEN` environment variable should be set to your access token which you can get from the [vk dev website](https://dev.vk.com/).
   - **Linux/Mac**:
     ```bash
     export ACCESS_TOKEN=your_access_token_here
