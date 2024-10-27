@@ -54,9 +54,8 @@ gcc main.c -o main -L/path/to/libcurl -lcurl
 ## Usage
 
 ```C
-CURL* curl;
 curl_global_init(CURL_GLOBAL_DEFAULT);
-curl = curl_easy_init();
+CURL* curl = curl_easy_init();
 
 VKQueryParams args = {
     user_id,
