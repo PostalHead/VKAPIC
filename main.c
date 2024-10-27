@@ -83,13 +83,18 @@ int main(int argc, char* argv[]) {
         dir_path = xargv[1];
     }
 
-    CURL* curl;
-    curl_global_init(CURL_GLOBAL_DEFAULT);
+    if (curl_global_init(CURL_GLOBAL_DEFAULT) != 0) {
+        fprintf(stderr, "curl_global_init() failed\n");
+        return -1;
+    }
 
+    CURL* curl = curl_easy_init();
+    if (curl == NULL) {
+        fprintf(stderr, "curl_easy_init() failed\n");
+        return -1;
+    }
 
     //get_users
-    curl = curl_easy_init();
-
     VKQueryParams args = {
         user_id,
         USER_FIELDS,
@@ -132,7 +137,6 @@ int main(int argc, char* argv[]) {
 
 
     //get_user_followers
-    curl = curl_easy_init();
     response = get_user_followers(curl, &args);
 
     if (response == NULL) {
@@ -166,7 +170,6 @@ int main(int argc, char* argv[]) {
 
 
     //get_user_subscriptions
-    curl = curl_easy_init();
     args.fields = GROUP_FIELDS;
     response = get_user_subscriptions(curl, &args);
 
@@ -199,7 +202,7 @@ int main(int argc, char* argv[]) {
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
-
+    curl_easy_cleanup(curl);
     curl_global_cleanup();
 
     return 0;

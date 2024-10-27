@@ -32,8 +32,6 @@ CURLcode curl_request(CURL* curl, char* url, Vec** storage) {
     
     res = curl_easy_perform(curl);
 
-    curl_easy_cleanup(curl);
-
     return res;
 }
 
