@@ -54,6 +54,8 @@ gcc main.c -o main -L/path/to/libcurl -lcurl
 ## Usage
 
 ```C
+char* access_token = getenv("ACCESS_TOKEN");
+
 curl_global_init(CURL_GLOBAL_DEFAULT);
 CURL* curl = curl_easy_init();
 
