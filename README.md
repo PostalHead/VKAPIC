@@ -79,4 +79,4 @@ curl_global_cleanup();
 ```
 
 Make sure that the `ACCESS_TOKEN` environment variable is set before running the program.
-By default, the jsons will be saved in the currect directory.
+By default, the jsons will be saved in the current directory.
