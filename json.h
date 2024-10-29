@@ -12,17 +12,17 @@ Vec* prettify_json(char* json) {
     }
 
     int indent = 0;
-    int inString = 0;
+    int in_string = 0;
 
     for (char* current_char = json; *current_char != 0; current_char++) {
         switch (*current_char) {
             case '\"':
-                inString = !inString; 
+                in_string = !in_string; 
                 vec_push(&pretty_json, current_char, sizeof(char));
                 break;
             case '{':
             case '[':
-                if (!inString) {
+                if (!in_string) {
                     vec_push(&pretty_json, current_char, sizeof(char));
                     vec_push(&pretty_json, "\n", sizeof(char));
                     indent++;
@@ -35,7 +35,7 @@ Vec* prettify_json(char* json) {
                 break;
             case '}':
             case ']':
-                if (!inString) {
+                if (!in_string) {
                     vec_push(&pretty_json, "\n", sizeof(char));
                     indent--;
                     for (int i = 0; i < indent; i++) {
@@ -48,7 +48,7 @@ Vec* prettify_json(char* json) {
                 break;
             case ',':
                 vec_push(&pretty_json, current_char, sizeof(char));
-                if (!inString) {
+                if (!in_string) {
                     vec_push(&pretty_json, "\n", sizeof(char));
                     for (int i = 0; i < indent; i++) {
                         vec_push(&pretty_json, "\t", sizeof(char));
@@ -57,7 +57,7 @@ Vec* prettify_json(char* json) {
                 break;
             case ':':
                 vec_push(&pretty_json, current_char, sizeof(char));
-                if (!inString) {
+                if (!in_string) {
                     vec_push(&pretty_json, " ", sizeof(char));
                 }
                 break;
