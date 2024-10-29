@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
         API_VERSION
     };
 
-    Vec* response = get_users(curl, &args);
+    char* response = get_users(curl, &args);
 
     if (response == NULL) {
         fprintf(stderr, "Couldn't get a response for the user: %s", user_id);
@@ -131,7 +131,6 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved the user info as %s\n", path);
     }
 
-    vec_free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
@@ -164,7 +163,6 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved %s user followers as %s\n", COUNT, path);
     }
 
-    vec_free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
@@ -198,7 +196,6 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved %s user subscriptions as %s\n", COUNT, path);
     }
 
-    vec_free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 

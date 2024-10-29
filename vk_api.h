@@ -1,5 +1,4 @@
 #include <curl/curl.h>
-#include "vec.h"
 
 #define BASE_URL "https://api.vk.com/method"
 #define URL_LEN 256 // TODO: Dynamic allocation for URL building 
@@ -14,17 +13,45 @@ typedef struct
     char* api_version;
 } VKQueryParams;
 
-size_t write_callback(void* contents, size_t size, size_t nmemb, Vec** vec) {
-    for (size_t i = 0; i < nmemb; i++) {
-        char* memb = (char*)contents + i * size;
-        vec_push(vec, memb, size);
+typedef struct 
+{
+    size_t size;
+    char* data;
+} Buffer;
+
+
+size_t write_callback(void* contents, size_t size, size_t nmemb, Buffer* storage) {
+    size_t total_size = size * nmemb;
+
+    char* reallocated_data = realloc(storage->data, storage->size + total_size + 1);
+    if (reallocated_data == NULL) {
+        fprintf(stderr, "realloc() returned NULL\n");
+        return 0;
     }
 
-    return size * nmemb;
+    storage->data = reallocated_data;
+    memcpy(&(storage->data[storage->size]), contents, total_size);
+    storage->size += total_size;
+    storage->data[storage->size] = 0;
+
+    return total_size;
 }
 
-CURLcode curl_request(CURL* curl, char* url, Vec** storage) {
+char* curl_request(CURL* curl, char* url) {
     CURLcode res;
+
+    Buffer* storage = malloc(sizeof(Buffer));
+    storage->data = malloc(1);
+    storage->size = 0;
+    if (storage == NULL) {
+        fprintf(stderr, "malloc() failed: couldn't allocate buffer\n");
+        return NULL;
+    }
+    else if (storage->data == NULL) {
+        fprintf(stderr, "malloc() failed: couldn't allocate buffer\n");
+        return NULL;
+    }
+
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -32,17 +59,19 @@ CURLcode curl_request(CURL* curl, char* url, Vec** storage) {
     
     res = curl_easy_perform(curl);
 
-    return res;
+    if (res != CURLE_OK) {
+        fprintf(stderr, "curl_request() failed: %s\n", curl_easy_strerror(res));
+        return NULL;
+    } 
+
+    char* data = storage->data;
+    free(storage);
+
+    return data;
 }
 
-Vec* get_users(CURL* curl, VKQueryParams* args) {
+char* get_users(CURL* curl, VKQueryParams* args) {
     CURLcode res;
-
-    Vec* response = vec_new(0, sizeof(char));
-    if (response == NULL) {
-        fprintf(stderr, "vec_new() failed\n");
-        return NULL;
-    }
 
     char url[URL_LEN];
     snprintf
@@ -58,25 +87,13 @@ Vec* get_users(CURL* curl, VKQueryParams* args) {
         args->api_version
     );
 
-    res = curl_request(curl, url, &response);
-
-    if (res != CURLE_OK) {
-        fprintf(stderr, "curl_request() failed: %s\n", curl_easy_strerror(res));
-        return NULL;
-    } 
-
+    char* response = curl_request(curl, url);
 
     return response;
 }
 
-Vec* get_user_followers(CURL* curl, VKQueryParams* args) {
+char* get_user_followers(CURL* curl, VKQueryParams* args) {
     CURLcode res;
-
-    Vec* response = vec_new(0, sizeof(char));
-    if (response == NULL) {
-        fprintf(stderr, "vec_new() failed\n");
-        return NULL;
-    }
 
     char url[URL_LEN];
     snprintf
@@ -93,26 +110,13 @@ Vec* get_user_followers(CURL* curl, VKQueryParams* args) {
         args->api_version
     );
 
-    res = curl_request(curl, url, &response);
-
-    if (res != CURLE_OK) {
-        fprintf(stderr, "curl_request() failed: %s\n", curl_easy_strerror(res));
-        return NULL;
-    } 
-
+    char* response = curl_request(curl, url);
 
     return response;
 }
 
-Vec* get_user_subscriptions(CURL* curl, VKQueryParams* args) {
+char* get_user_subscriptions(CURL* curl, VKQueryParams* args) {
     CURLcode res;
-
-    Vec* response = vec_new(0, sizeof(char));
-    
-    if (response == NULL) {
-        fprintf(stderr, "vec_new() failed\n");
-        return NULL;
-    }
 
     char url[URL_LEN];
     snprintf
@@ -129,13 +133,7 @@ Vec* get_user_subscriptions(CURL* curl, VKQueryParams* args) {
         args->api_version
     );
 
-    res = curl_request(curl, url, &response);
-
-    if (res != CURLE_OK) {
-        fprintf(stderr, "curl_request() failed: %s\n", curl_easy_strerror(res));
-        return NULL;
-    } 
-
+    char* response = curl_request(curl, url);
 
     return response;
 }
