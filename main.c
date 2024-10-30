@@ -131,6 +131,7 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved the user info as %s\n", path);
     }
 
+    free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
@@ -163,6 +164,7 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved %s user followers as %s\n", COUNT, path);
     }
 
+    free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
@@ -196,6 +198,7 @@ int main(int argc, char* argv[]) {
         printf("Successfully saved %s user subscriptions as %s\n", COUNT, path);
     }
 
+    free(response);
     vec_free(pretty);
     memset(path, 0, sizeof(path));
 
