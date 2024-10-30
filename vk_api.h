@@ -41,16 +41,18 @@ char* curl_request(CURL* curl, char* url) {
     CURLcode res;
 
     Buffer* storage = malloc(sizeof(Buffer));
-    storage->data = malloc(1);
-    storage->size = 0;
     if (storage == NULL) {
         fprintf(stderr, "malloc() failed: couldn't allocate buffer\n");
         return NULL;
     }
-    else if (storage->data == NULL) {
+
+    storage->data = malloc(1);
+    if (storage->data == NULL) {
         fprintf(stderr, "malloc() failed: couldn't allocate buffer\n");
         return NULL;
     }
+
+    storage->size = 0;
 
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
